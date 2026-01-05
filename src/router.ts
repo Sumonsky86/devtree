@@ -1,20 +1,13 @@
 import { Router } from 'express'
+import User from './models/User';
 
 const router = Router()
 //Routing
-router.get('/', (req,res) => {
-    res.send("Ahhh pero que pedazo de crack")
-})
-router.get('/nosotros', (req,res) => {
-    res.send("Ahhh pero que pedazo de dios de la programacion")
-})
-router.get('/blog', (req,res) => {
-    res.send("Ahhh pero que pedazo de genio cheto escritor")
-})
 
-router.post('/auth/register', (req,res) => {
-    res.send("logueate crack")
-    console.log(req.body);
+router.post('/auth/register', async (req,res) => {
+    
+    const user = new User(req.body)
+    await user.save()
     
 })
 
