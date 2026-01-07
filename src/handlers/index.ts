@@ -11,7 +11,6 @@ export const createAccount  = async (req: Request, res: Response) => {
         return res.status(409).json({ error: error.message})
     }
     const hash = await hashPassword(password)
-    console.log(hash);
     
     const user = new User({...req.body, password: hash})
     await user.save()
