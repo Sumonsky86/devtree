@@ -1,20 +1,56 @@
 import User from "../models/User"
 import {Request, Response } from 'express'
-import { hashPassword } from "../utils/auth"
+import { checkPassword, hashPassword } from "../utils/auth"
+import slug from "slug"
+import { validationResult } from 'express-validator'
 
 
 export const createAccount  = async (req: Request, res: Response) => {
     const {email, password} = req.body
     const userExists = await User.findOne({email})
-    if(userExists){
-        const error = new Error('El usuario ya existe')
+
+    const handle = slug(req.body.handle, '')
+    const handleExists = await User.findOne({handle})
+
+
+    
+    if(handleExists){
+        const error = new Error('Nombre de usuario no disponible')
         return res.status(409).json({ error: error.message})
     }
+    if(userExists){
+        const error = new Error('Un usuario con ese correo ya existe')
+        return res.status(409).json({ error: error.message})
+    }
+
     const hash = await hashPassword(password)
-    
-    const user = new User({...req.body, password: hash})
+    const user = new User({...req.body, handle, password: hash})
     await user.save()
     res.send({message: 'Usuario creado correctamente'})
     
 }
 
+
+export const login = async (req: Request, res: Response) => {
+    let errors = validationResult(req)
+    
+    
+    if(errors.isEmpty()===false){
+        return res.status(409).json({ errors: errors.array() })
+    }
+    //revisar si el usuario esta registrado
+    const {email, password} = req.body
+    const user = await User.findOne({email})
+
+    if(!user){
+        const error = new Error('El usuario no existe')
+        return res.status(404).json({ error: error.message})
+    }
+    //comprobar si el password es correcto
+    const isPasswordCorrect = await checkPassword(password, user.password)
+    if(!isPasswordCorrect){
+        const error= new Error('el password es incorrecto')
+        return res.status(401).json({error: error.message})
+    }
+    res.send({message: 'Login succesfull'})
+}
