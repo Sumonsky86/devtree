@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form'
 
 export default function RegisterView() {
-    const { register, watch, formState: {errors}, handleSubmit } = useForm();
+    const { register, watch, formState: { errors }, handleSubmit } = useForm();
+
     return (
         <>
             <h1 className="text-4xl text-white font-bold">Crear cuenta</h1>
