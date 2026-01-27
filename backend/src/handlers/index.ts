@@ -26,7 +26,7 @@ export const createAccount  = async (req: Request, res: Response) => {
     const hash = await hashPassword(password)
     const user = new User({...req.body, handle, password: hash})
     await user.save()
-    res.send({message: 'Usuario creado correctamente'})
+    res.status(201).send('Usuario creado correctamente')
     
 }
 
