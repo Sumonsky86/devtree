@@ -6,14 +6,13 @@ import { validationResult } from 'express-validator'
 import { generateJWT } from "../utils/jwt"
 
 
+
 export const createAccount  = async (req: Request, res: Response) => {
     const {email, password} = req.body
     const userExists = await User.findOne({email})
 
     const handle = slug(req.body.handle, '')
     const handleExists = await User.findOne({handle})
-
-
     
     if(handleExists){
         const error = new Error('Nombre de usuario no disponible')
@@ -30,7 +29,6 @@ export const createAccount  = async (req: Request, res: Response) => {
     res.status(201).send('Usuario creado correctamente')
     
 }
-
 
 export const login = async (req: Request, res: Response) => {
     let errors = validationResult(req)
@@ -56,4 +54,13 @@ export const login = async (req: Request, res: Response) => {
     const token = generateJWT({id: user._id})
 
     res.send(token)
+}
+
+export const getUser = async (req: Request, res: Response) => {
+    const bearer = req.headers.authorization
+    if(!bearer || undefined){
+        const error = new Error('No autorizado')
+        res.status(401).json({error: error.message})
+    }
+    
 }
