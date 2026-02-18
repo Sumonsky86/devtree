@@ -22,9 +22,7 @@ export default function LoginView() {
     } catch (error) {
       if (isAxiosError(error) && error.response)
         toast.error(error.response.data.error)
-
     }
-
   }
 
   return (
